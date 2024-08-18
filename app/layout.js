@@ -1,8 +1,10 @@
-import { Inter } from 'next/font/google'
+import Link from 'next/link'
 import LinkClient from './component/LinkClient'
+import SwitchClient from './component/SwitchClient'
+import ThemeProviderClient from './provider/ThemeProviderClient'
+import { Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.css'
 import './globals.css'
-import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -12,17 +14,21 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+
   return (
+
     <html lang="en">
       <body>
+        <ThemeProviderClient>
+        {/*BARRA NAVEGACION*/}
         <nav
-          className="navbar fixed-top navbar-expand-lg bg-body-secondary"
+          className="navbar fixed-top navbar-expand-lg"
           data-bs-theme=""
         >
           <div className="container-fluid">
-            <Link href="/" className='navbar-brand d-flex  align-items-center'>
+            <Link className="navbar-brand d-flex  align-items-center" href="/">
               <img
-                src="./img/logo.png"
+                src="/img/logo.png"
                 alt="Logo"
                 height={35}
                 className="d-inline-block align-text-top"
@@ -41,33 +47,27 @@ export default function RootLayout({ children }) {
               <span className="navbar-toggler-icon" />
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <LinkClient route="/" texto="Home" />
-                </li>
-                <li className="nav-item">
-                  <LinkClient route="/scooter" texto="Scooters" />
-                </li>
-                <li className="nav-item">
-                  <LinkClient route="/importacion" texto="Importación" />
-                </li>
-              </ul>
-            </div>
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="flexSwitchCheckDefault"
-              />
-              <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-                Tema oscuro
-              </label>
-            </div>
+                  <ul className="navbar-nav">
+                    <li className="nav-item">
+                      <LinkClient route="/" texto="Home"/>
+                    </li>
+                    <li className="nav-item">
+                      <LinkClient route="/scooter" texto="Scooters"/>
+                    </li>
+                    <li className="nav-item">
+                      <LinkClient route="/importacion" texto="Importacion"/>
+                    </li>
+                  </ul>
+                </div>
+
+                <SwitchClient/>
+
           </div>
         </nav>
         {children}
+        </ThemeProviderClient>
       </body>
     </html>
+
   )
 }

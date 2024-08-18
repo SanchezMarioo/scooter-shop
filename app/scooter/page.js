@@ -1,17 +1,33 @@
 import React from 'react';
 import ScooterCard from '../component/ScooterCard';
-async function getProductos() {
-    const response = await fetch('http://localhost:3002/products');
+import ScooterTop from '../component/ScooterTop';
+import SearchNav from '../component/SearchNav';
+async function getProductos(precio) {
+  let response;
+  if(precio) response = await fetch('http://localhost:3002/products?precio_lte='+precio)
+    else response = await fetch('http://localhost:3002/products')
     const productos = await response.json();
     if (!response.ok) {
       throw new Error('No se pudo obtener los productos');
     }
     return productos;
 }
-export default async function Scooter() {
-  const data = await getProductos();
+async function topProductos(){
+  const responseTop = await fetch('http://localhost:3002/products?destacado=1', { next: { revalidate: 3600 }});
+  const productosTop = await responseTop.json();
+  if (!responseTop.ok) {
+    throw new Error('No se pudo obtener los productos');
+  }
+  return productosTop;
+}
+export default async function Scooter({searchParams}) {
+  const data = await getProductos(searchParams.precio);
+  const dataTop = await topProductos();
+  console.log(searchParams);
   
     return (
+      <>
+      <SearchNav />
       <div className="contPrincipal container mb-5">
       <h2>Scooters ({data.length})</h2>
       <div className="grid">
@@ -20,7 +36,8 @@ export default async function Scooter() {
           {/*DESTACADOS TARJETAS*/}
           <div className="d-flex p-2 flex-wrap justify-content-between">
               {data.map((producto) => (
-                <ScooterCard key={producto.id} modelo={producto.modelo} img={producto.img} txt={producto.txt} />
+                <ScooterCard key={producto.id} modelo={producto.modelo} img={producto.img} txt={producto.txt} id={producto.id}/>
+
               ))}
           </div>
           </div>
@@ -31,24 +48,15 @@ export default async function Scooter() {
               <h4>Top</h4>
               </div>
               <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                  Xiaomi Mi Electric Scooter Pro{" "}
-                  <span className="badge text-bg-dark float-end">546 €</span>
-              </li>
-              <li className="list-group-item">
-                  Bongo Serie S{" "}
-                  <span className="badge text-bg-dark float-end">375 €</span>
-              </li>
-              <li className="list-group-item">
-                  Xiaomi Mi Electric Scooter{" "}
-                  <span className="badge text-bg-dark float-end">250 €</span>
-              </li>
+                {dataTop.map((producto) => (
+                  <ScooterTop key={producto.id} modelo={producto.modelo} precio={producto.precio} />
+                ))}
               </ul>
           </div>
           </div>
       </div>
       </div>
   </div>
-
+  </>
     );
   }
