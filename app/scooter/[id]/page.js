@@ -3,7 +3,7 @@ import HouseFillComponent from "@/app/component/HouseFill";
 
 //Get data from json-server, Top Products
 async function getProduct(id) {
-    const res = await fetch('http://localhost:3002/products?id='+id, { cache: 'no-store' })
+    const res = await fetch(process.env.DB_HOST+'products?id='+id, { cache: 'no-store' })
    
     if (!res.ok) {
       throw new Error('Failed to fetch data')

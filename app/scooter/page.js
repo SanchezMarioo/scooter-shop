@@ -4,8 +4,8 @@ import ScooterTop from '../component/ScooterTop';
 import SearchNav from '../component/SearchNav';
 async function getProductos(precio) {
   let response;
-  if(precio) response = await fetch('http://localhost:3002/products?precio_lte='+precio)
-    else response = await fetch('http://localhost:3002/products')
+  if(precio) response = await fetch(process.env.DB_HOST+ 'products?precio_lte='+precio)
+    else response = await fetch(process.env.DB_HOST + 'products')
     const productos = await response.json();
     if (!response.ok) {
       throw new Error('No se pudo obtener los productos');
@@ -13,7 +13,7 @@ async function getProductos(precio) {
     return productos;
 }
 async function topProductos(){
-  const responseTop = await fetch('http://localhost:3002/products?destacado=1', { next: { revalidate: 3600 }});
+  const responseTop = await fetch(process.env.DB_HOST + 'products?destacado=1', { next: { revalidate: 3600 }});
   const productosTop = await responseTop.json();
   if (!responseTop.ok) {
     throw new Error('No se pudo obtener los productos');
@@ -23,7 +23,6 @@ async function topProductos(){
 export default async function Scooter({searchParams}) {
   const data = await getProductos(searchParams.precio);
   const dataTop = await topProductos();
-  console.log(searchParams);
   
     return (
       <>
